@@ -17,9 +17,6 @@ namespace DotNetCoreApi.Repositories
             _DbContext = new Test_dbContext();
         }
 
-
-        // GET /users
-        [HttpGet]
         public IEnumerable<User> GetAllUsers()
         {
             var users = (_DbContext.Users.ToList());
@@ -34,9 +31,7 @@ namespace DotNetCoreApi.Repositories
             }
             
         }
-
-
-         public ActionResult<User> GetAllAdmins()
+        public ActionResult<User> GetAllAdmins()
         {
             var user= (_DbContext.Users.Where(w=>w.Role==2).FirstOrDefault());
 
@@ -76,7 +71,7 @@ namespace DotNetCoreApi.Repositories
             }
             
         }
-
+        //Add normal user
         public ActionResult<User> InsertNormalUser(User _user)
         {
             try
@@ -93,6 +88,7 @@ namespace DotNetCoreApi.Repositories
                 return BadRequest();
             }
         }
+        //Add Admin user
         public ActionResult<User> InsertAdminUser(User _user)
         {
             
@@ -109,10 +105,9 @@ namespace DotNetCoreApi.Repositories
                 return BadRequest();
             }
         }
-
-        public ActionResult<User> UpdateUser(int id, User _user)
+        public ActionResult<User> UpdateUser( User _user)
         {
-            var UpdateUser = _DbContext.Users.Where(u => u.Id == id).FirstOrDefault();
+            var UpdateUser = _DbContext.Users.Where(u => u.Id == _user.Id).FirstOrDefault();
             if (UpdateUser != null) {
                 UpdateUser.Fullname = _user.Fullname;
                 UpdateUser.Username = _user.Username;
@@ -142,9 +137,14 @@ namespace DotNetCoreApi.Repositories
             else
             {
                 return BadRequest();
-            }
-
-
+            } 
         }
+        //login unit to save data on cookies 
+        public ActionResult<User> AdminLogin(string username,string password)
+        {
+            var user = _DbContext.Users.Where(u => u.Username == username && u.Password == password && u.Role == 2).FirstOrDefault();
+            if (user != null)  { return user; } else  { return BadRequest(); }
+        }
+         
     }
 }
